@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { PlayerConfig } from "@/lib/players";
 
 interface Props {
@@ -13,17 +12,16 @@ export default function PlayerSwitcher({ players, currentId }: Props) {
   const router = useRouter();
 
   return (
-    <Tabs
+    <select
       value={currentId}
-      onValueChange={(value) => router.push(`/?player=${value}`)}
+      onChange={(e) => router.push(`/?player=${e.target.value}`)}
+      className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
     >
-      <TabsList>
-        {players.map((p) => (
-          <TabsTrigger key={p.id} value={p.id}>
-            {p.name}
-          </TabsTrigger>
-        ))}
-      </TabsList>
-    </Tabs>
+      {players.map((p) => (
+        <option key={p.id} value={p.id}>
+          {p.name}
+        </option>
+      ))}
+    </select>
   );
 }
