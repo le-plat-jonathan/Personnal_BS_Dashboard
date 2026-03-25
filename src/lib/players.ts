@@ -9,7 +9,7 @@ export const PLAYERS: PlayerConfig[] = [
   { id: "hermes", name: "Hermes", tag: "#2QLVV8UL8Q" },
   { id: "hephaïstos", name: "Hephaïstos", tag: "#2QROLUGL8U" },
   { id: "light", name: "Light", tag: "#2GOQV2LRCG" },
-  { id: "anakyn380", name: "Anakyn380", tag: "#QPLY2VCQ0" },
+  { id: "anakyn380", name: "Anakyn380", tag: "#QPLY2VCQO" },
   { id: "natnat", name: "Natnat", tag: "#2UYOO2RY9R" },
 ];
 
