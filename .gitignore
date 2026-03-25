@@ -1,0 +1,17 @@
+node_modules/
+
+# next.js
+.next/
+out/
+
+# env files — NE JAMAIS COMMITER
+.env
+.env.local
+.env*.local
+
+# typescript
+tsconfig.tsbuildinfo
+
+# misc
+.DS_Store
+*.pem
