@@ -42,26 +42,26 @@ export default async function Home({ searchParams }: PageProps) {
 }
 
 async function PlayerDashboard({ tag }: { tag: string }) {
-  const [playerResult, battleLogResult, brawlifyMap] = await Promise.all([
+  const [playerResult, battleLogResult, brawlifyMapResult] = await Promise.all([
     getPlayer(tag).catch((e: Error) => e),
     getBattleLog(tag).catch((e: Error) => e),
-    getBrawlifyMap(),
+    getBrawlifyMap().catch(() => new Map()),
   ]);
 
   if (playerResult instanceof Error) {
+    console.error(`[BS Dashboard] getPlayer(${tag}) failed:`, playerResult);
     return (
       <div className="rounded-xl border border-border bg-card p-8 text-center space-y-2">
         <p className="font-semibold text-lg">Impossible de charger ce profil</p>
-        <p className="text-sm text-muted-foreground">{playerResult.message}</p>
+        <p className="text-sm text-muted-foreground font-mono">{playerResult.message}</p>
         <p className="text-xs text-muted-foreground">Tag : {tag}</p>
       </div>
     );
   }
 
   const player = playerResult;
-  const battleLog = battleLogResult instanceof Error
-    ? { items: [] }
-    : battleLogResult;
+  const battleLog = battleLogResult instanceof Error ? { items: [] } : battleLogResult;
+  const brawlifyMap = brawlifyMapResult instanceof Map ? brawlifyMapResult : new Map();
 
   return (
     <div className="space-y-6">
