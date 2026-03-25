@@ -75,7 +75,10 @@ async function PlayerDashboard({ tag }: { tag: string }) {
       <BattleLog battles={battleLog.items} playerTag={player.tag} brawlifyMap={brawlifyMap} />
 
       {/* Full brawlers grid */}
-      <BrawlersList brawlers={player.brawlers} brawlifyMap={brawlifyMap} />
+      <BrawlersList
+        brawlers={player.brawlers}
+        brawlifyData={Object.fromEntries(brawlifyMap) as Record<number, import("@/types/brawlify").BrawlifyBrawler>}
+      />
     </div>
   );
 }

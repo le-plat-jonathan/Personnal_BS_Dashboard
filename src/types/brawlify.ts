@@ -1,3 +1,9 @@
+export interface BrawlifyAbility {
+  id: number;
+  name: string;
+  imageUrl: string;
+}
+
 export interface BrawlifyBrawler {
   id: number;
   name: string;
@@ -15,6 +21,8 @@ export interface BrawlifyBrawler {
     name: string;
   };
   released: boolean;
+  starPowers: BrawlifyAbility[];
+  gadgets: BrawlifyAbility[];
 }
 
 export interface BrawlifyResponse {

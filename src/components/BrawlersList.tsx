@@ -1,12 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { getBrawlerImageUrl } from "@/lib/brawlify";
 import type { Brawler } from "@/types/brawlstars";
-import type { BrawlifyMap } from "@/types/brawlify";
+import type { BrawlifyBrawler } from "@/types/brawlify";
 
 interface Props {
   brawlers: Brawler[];
-  brawlifyMap: BrawlifyMap;
+  brawlifyData: Record<number, BrawlifyBrawler>;
 }
+
+type Filter = "all" | "hypercharge" | string;
 
 function rankColor(rank: number): string {
   if (rank >= 35) return "#ff6fcf";
@@ -17,53 +22,113 @@ function rankColor(rank: number): string {
   return "#adb5bd";
 }
 
-export default function BrawlersList({ brawlers, brawlifyMap }: Props) {
+export default function BrawlersList({ brawlers, brawlifyData }: Props) {
+  const [filter, setFilter] = useState<Filter>("all");
+
+  const classes = Array.from(
+    new Set(
+      brawlers
+        .map((b) => brawlifyData[b.id]?.class.name)
+        .filter((c): c is string => Boolean(c) && c !== "Unknown")
+    )
+  ).sort();
+
+  const hyperchargeCount = brawlers.filter((b) => b.hyperCharge != null).length;
+
   const sorted = [...brawlers].sort((a, b) => b.trophies - a.trophies);
+  const filtered = sorted.filter((b) => {
+    if (filter === "hypercharge") return b.hyperCharge != null;
+    if (filter !== "all") return brawlifyData[b.id]?.class.name === filter;
+    return true;
+  });
 
   return (
     <section className="rounded-xl border border-border bg-card p-6">
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2">
+      <div className="mb-4">
+        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2 mb-3">
           🎮 Les bagarreurs{" "}
           <span className="text-foreground">{brawlers.length}</span>
         </h2>
+
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2">
+          <FilterBtn active={filter === "all"} onClick={() => setFilter("all")}>
+            Tous ({brawlers.length})
+          </FilterBtn>
+          {hyperchargeCount > 0 && (
+            <FilterBtn
+              active={filter === "hypercharge"}
+              onClick={() => setFilter("hypercharge")}
+            >
+              ⚡ Hypercharge ({hyperchargeCount})
+            </FilterBtn>
+          )}
+          {classes.map((cls) => (
+            <FilterBtn
+              key={cls}
+              active={filter === cls}
+              onClick={() => setFilter(cls)}
+            >
+              {cls}
+            </FilterBtn>
+          ))}
+        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-        {sorted.map((b) => {
-          const meta = brawlifyMap.get(b.id);
+        {filtered.map((b) => {
+          const meta = brawlifyData[b.id];
           const rarityColor = meta?.rarity.color ?? "#888";
-          const imgUrl = getBrawlerImageUrl(b.id);
+          const totalSP = meta?.starPowers.length ?? 2;
+          const totalGadgets = meta?.gadgets.length ?? 2;
 
           return (
             <div
               key={b.id}
-              className="rounded-lg border border-border bg-muted/60 p-3 flex flex-col items-center gap-2 hover:bg-zinc-700/60 transition-colors"
+              className="rounded-lg border border-border bg-muted/60 p-3 flex flex-col items-center gap-2 hover:bg-muted/80 transition-colors"
             >
-              {/* Brawler image */}
-              <div className="relative w-16 h-16">
+              {/* Image + hypercharge badge */}
+              <div className="relative w-16 h-16 shrink-0">
                 <Image
-                  src={meta?.imageUrl ?? imgUrl}
+                  src={meta?.imageUrl ?? getBrawlerImageUrl(b.id)}
                   alt={b.name}
                   fill
                   className="object-contain drop-shadow-md"
                   unoptimized
                 />
+                {b.hyperCharge && (
+                  <span
+                    className="absolute -top-1 -right-1 text-base leading-none"
+                    title={b.hyperCharge.name}
+                  >
+                    ⚡
+                  </span>
+                )}
               </div>
 
-              {/* Name */}
+              {/* Name + rarity + class */}
               <div className="text-center">
-                <div className="text-xs font-bold uppercase tracking-wide leading-tight">{b.name}</div>
+                <div className="text-xs font-bold uppercase tracking-wide leading-tight">
+                  {b.name}
+                </div>
                 {meta && (
-                  <div className="text-[10px] mt-0.5" style={{ color: rarityColor }}>
-                    {meta.rarity.name}
+                  <div className="text-[10px] mt-0.5 flex items-center gap-1 justify-center flex-wrap">
+                    <span style={{ color: rarityColor }}>{meta.rarity.name}</span>
+                    {meta.class.name !== "Unknown" && (
+                      <>
+                        <span className="text-muted-foreground">·</span>
+                        <span className="text-muted-foreground">{meta.class.name}</span>
+                      </>
+                    )}
                   </div>
                 )}
               </div>
 
-              {/* Stats row */}
+              {/* Trophies + rank */}
               <div className="w-full flex justify-between items-center text-xs">
-                <span className="font-bold text-yellow-400">🏆 {b.trophies.toLocaleString()}</span>
+                <span className="font-bold text-yellow-400">
+                  🏆 {b.trophies.toLocaleString()}
+                </span>
                 <span
                   className="font-bold rounded-full w-6 h-6 flex items-center justify-center text-white text-[10px]"
                   style={{ backgroundColor: rankColor(b.rank) }}
@@ -73,15 +138,100 @@ export default function BrawlersList({ brawlers, brawlifyMap }: Props) {
                 </span>
               </div>
 
-              {/* Power level */}
-              <div className="w-full flex items-center gap-1">
-                <PowerBar power={b.power} />
+              {/* Power bar */}
+              <PowerBar power={b.power} />
+
+              {/* Star Powers + Gadgets */}
+              <div className="w-full flex justify-between text-[10px] text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <span>SP</span>
+                  <Dots
+                    unlocked={b.starPowers.length}
+                    total={totalSP}
+                    color="#f9c74f"
+                  />
+                </div>
+                <div className="flex items-center gap-1">
+                  <span>Gad</span>
+                  <Dots
+                    unlocked={b.gadgets.length}
+                    total={totalGadgets}
+                    color="#90e0ef"
+                  />
+                </div>
               </div>
+
+              {/* Gears */}
+              {b.gears.length > 0 && (
+                <div className="w-full flex flex-wrap gap-1 justify-center">
+                  {b.gears.map((g) => (
+                    <span
+                      key={g.name}
+                      className="text-[9px] bg-background px-1.5 py-0.5 rounded border border-border text-foreground"
+                      title={`${g.name} niv.${g.level}`}
+                    >
+                      {g.name} {g.level}
+                    </span>
+                  ))}
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {filtered.length === 0 && (
+        <p className="text-center text-muted-foreground text-sm py-8">
+          Aucun brawler pour ce filtre.
+        </p>
+      )}
     </section>
+  );
+}
+
+function FilterBtn({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer ${
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted text-muted-foreground hover:text-foreground"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Dots({
+  unlocked,
+  total,
+  color,
+}: {
+  unlocked: number;
+  total: number;
+  color: string;
+}) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: total }).map((_, i) => (
+        <div
+          key={i}
+          className="w-2 h-2 rounded-full"
+          style={{ backgroundColor: i < unlocked ? color : "var(--muted-foreground)" }}
+          title={i < unlocked ? "Débloqué" : "Manquant"}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -95,7 +245,11 @@ function PowerBar({ power }: { power: number }) {
             key={i}
             className={`h-1 flex-1 rounded-sm ${
               i < power
-                ? power >= 11 ? "bg-violet-400" : power >= 9 ? "bg-blue-400" : "bg-green-400"
+                ? power >= 11
+                  ? "bg-violet-400"
+                  : power >= 9
+                  ? "bg-blue-400"
+                  : "bg-green-400"
                 : "bg-muted"
             }`}
           />
