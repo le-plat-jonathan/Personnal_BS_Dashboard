@@ -25,7 +25,8 @@ function resultStyle(result?: string): { bg: string; text: string; label: string
   return { bg: "border-border bg-white/5", text: "text-muted-foreground", label: result ?? "—" };
 }
 
-function formatMode(mode: string): string {
+function formatMode(mode?: string): string {
+  if (!mode) return "—";
   return mode.replace(/([A-Z])/g, " $1").trim();
 }
 
