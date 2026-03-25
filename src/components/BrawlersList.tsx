@@ -33,6 +33,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
 export default function BrawlersList({ brawlers, brawlifyData }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<SortKey>("trophies_desc");
+  const [search, setSearch] = useState("");
 
   const classes = Array.from(
     new Set(
@@ -54,6 +55,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
   });
 
   const filtered = sorted.filter((b) => {
+    if (search && !b.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === "hypercharge") return b.hyperCharge != null;
     if (filter !== "all") return brawlifyData[b.id]?.class.name === filter;
     return true;
@@ -91,6 +93,15 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
             </FilterBtn>
           ))}
         </div>
+
+        {/* Search */}
+        <input
+          type="text"
+          placeholder="Rechercher un brawler…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-64 rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+        />
 
         {/* Sort */}
         <div className="flex items-center gap-2">
