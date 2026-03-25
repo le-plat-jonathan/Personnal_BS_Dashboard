@@ -12,6 +12,7 @@ interface Props {
 }
 
 type Filter = "all" | "hypercharge" | string;
+type SortKey = "trophies_desc" | "trophies_asc" | "name" | "power";
 
 function rankColor(rank: number): string {
   if (rank >= 35) return "#ff6fcf";
@@ -22,8 +23,16 @@ function rankColor(rank: number): string {
   return "#adb5bd";
 }
 
+const SORT_OPTIONS: { value: SortKey; label: string }[] = [
+  { value: "trophies_desc", label: "🏆 Max" },
+  { value: "trophies_asc", label: "🏆 Min" },
+  { value: "name", label: "A–Z" },
+  { value: "power", label: "Niveau" },
+];
+
 export default function BrawlersList({ brawlers, brawlifyData }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
+  const [sort, setSort] = useState<SortKey>("trophies_desc");
 
   const classes = Array.from(
     new Set(
@@ -35,7 +44,15 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
 
   const hyperchargeCount = brawlers.filter((b) => b.hyperCharge != null).length;
 
-  const sorted = [...brawlers].sort((a, b) => b.trophies - a.trophies);
+  const sorted = [...brawlers].sort((a, b) => {
+    switch (sort) {
+      case "trophies_asc": return a.trophies - b.trophies;
+      case "name": return a.name.localeCompare(b.name);
+      case "power": return b.power - a.power;
+      default: return b.trophies - a.trophies;
+    }
+  });
+
   const filtered = sorted.filter((b) => {
     if (filter === "hypercharge") return b.hyperCharge != null;
     if (filter !== "all") return brawlifyData[b.id]?.class.name === filter;
@@ -44,8 +61,8 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
 
   return (
     <section className="rounded-xl border border-border bg-card p-6">
-      <div className="mb-4">
-        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2 mb-3">
+      <div className="mb-4 space-y-3">
+        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2">
           🎮 Les bagarreurs{" "}
           <span className="text-foreground">{brawlers.length}</span>
         </h2>
@@ -60,7 +77,8 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
               active={filter === "hypercharge"}
               onClick={() => setFilter("hypercharge")}
             >
-              ⚡ Hypercharge ({hyperchargeCount})
+              <span className="inline-block w-2 h-2 rounded-full bg-violet-400 mr-1" />
+              Hypercharge ({hyperchargeCount})
             </FilterBtn>
           )}
           {classes.map((cls) => (
@@ -72,6 +90,22 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
               {cls}
             </FilterBtn>
           ))}
+        </div>
+
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-muted-foreground uppercase tracking-wider">Trier</span>
+          <div className="flex flex-wrap gap-1.5">
+            {SORT_OPTIONS.map((opt) => (
+              <FilterBtn
+                key={opt.value}
+                active={sort === opt.value}
+                onClick={() => setSort(opt.value)}
+              >
+                {opt.label}
+              </FilterBtn>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -98,11 +132,9 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
                 />
                 {b.hyperCharge && (
                   <span
-                    className="absolute -top-1 -right-1 text-base leading-none"
-                    title={b.hyperCharge.name}
-                  >
-                    ⚡
-                  </span>
+                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-violet-400 border-2 border-card"
+                    title={`Hypercharge : ${b.hyperCharge.name}`}
+                  />
                 )}
               </div>
 
