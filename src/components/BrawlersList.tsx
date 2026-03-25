@@ -43,7 +43,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
     )
   ).sort();
 
-  const hyperchargeCount = brawlers.filter((b) => b.hyperCharge != null).length;
+  const hyperchargeCount = brawlers.filter((b) => b.hyperCharges && b.hyperCharges.length > 0).length;
 
   const sorted = [...brawlers].sort((a, b) => {
     switch (sort) {
@@ -56,7 +56,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
 
   const filtered = sorted.filter((b) => {
     if (search && !b.name.toLowerCase().includes(search.toLowerCase())) return false;
-    if (filter === "hypercharge") return b.hyperCharge != null;
+    if (filter === "hypercharge") return b.hyperCharges != null && b.hyperCharges.length > 0;
     if (filter !== "all") return brawlifyData[b.id]?.class.name === filter;
     return true;
   });
@@ -141,10 +141,10 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
                   className="object-contain drop-shadow-md"
                   unoptimized
                 />
-                {b.hyperCharge && (
+                {b.hyperCharges && b.hyperCharges.length > 0 && (
                   <span
                     className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-violet-400 border-2 border-card"
-                    title={`Hypercharge : ${b.hyperCharge.name}`}
+                    title={`Hypercharge : ${b.hyperCharges[0].name}`}
                   />
                 )}
               </div>

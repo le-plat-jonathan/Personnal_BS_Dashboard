@@ -17,7 +17,7 @@ export interface Brawler {
   gears: { name: string; level: number }[];
   starPowers: { id: number; name: string }[];
   gadgets: { id: number; name: string }[];
-  hyperCharge?: { name: string; level: number; maxLevel: number };
+  hyperCharges?: { id: number; name: string }[];
 }
 
 export interface Player {
