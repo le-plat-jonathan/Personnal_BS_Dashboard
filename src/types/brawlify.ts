@@ -2,6 +2,7 @@ export interface BrawlifyAbility {
   id: number;
   name: string;
   imageUrl: string;
+  description: string;
 }
 
 export interface BrawlifyBrawler {

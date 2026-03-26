@@ -20,12 +20,12 @@ export default async function Home({ searchParams }: PageProps) {
   const currentPlayer = getPlayerById(playerId ?? "adhes");
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Header */}
       <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-10">
-        <div className="container mx-auto px-4 max-w-6xl h-14 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <span className="font-black text-lg tracking-tight">🎮 BS Dashboard</span>
+        <div className="container mx-auto px-4 max-w-6xl h-14 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+            <span className="font-black text-lg tracking-tight shrink-0">🎮 BS Dashboard</span>
             <PlayerSwitcher players={PLAYERS} currentId={currentPlayer.id} />
           </div>
           <ThemeToggle />

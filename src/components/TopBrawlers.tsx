@@ -34,7 +34,7 @@ export default function TopBrawlers({ brawlers, brawlifyMap }: Props) {
       </h2>
 
       {/* Podium top 3 */}
-      <div className="flex items-end justify-center gap-4 mb-6">
+      <div className="flex items-end justify-center gap-2 sm:gap-4 mb-6">
         {/* 2nd */}
         <PodiumCard brawler={second} rank={2} brawlifyMap={brawlifyMap} elevated={false} />
         {/* 1st */}
@@ -81,7 +81,7 @@ function PodiumCard({
         />
       </div>
       <div
-        className={`flex flex-col items-center border rounded-xl px-5 py-3 min-w-[110px] ${PODIUM_BG[rank]}`}
+        className={`flex flex-col items-center border rounded-xl px-3 sm:px-5 py-3 min-w-[90px] sm:min-w-[110px] ${PODIUM_BG[rank]}`}
       >
         <span
           className={`w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold mb-1 ${RANK_BG[rank]}`}

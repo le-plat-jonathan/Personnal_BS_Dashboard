@@ -5,6 +5,7 @@ import Image from "next/image";
 import { getBrawlerImageUrl } from "@/lib/brawlify";
 import type { Brawler } from "@/types/brawlstars";
 import type { BrawlifyBrawler, BrawlifyAbility } from "@/types/brawlify";
+import BrawlerModal from "@/components/BrawlerModal";
 
 interface Props {
   brawlers: Brawler[];
@@ -34,6 +35,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<SortKey>("trophies_desc");
   const [search, setSearch] = useState("");
+  const [selected, setSelected] = useState<Brawler | null>(null);
 
   const classes = Array.from(
     new Set(
@@ -62,6 +64,14 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
   });
 
   return (
+    <>
+    {selected && (
+      <BrawlerModal
+        brawler={selected}
+        meta={brawlifyData[selected.id]}
+        onClose={() => setSelected(null)}
+      />
+    )}
     <section className="rounded-xl border border-border bg-card p-6">
       <div className="mb-4 space-y-3">
         <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2">
@@ -128,7 +138,8 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
           return (
             <div
               key={b.id}
-              className="rounded-lg border border-border bg-muted/60 p-3 flex flex-col items-center gap-2 hover:bg-muted/80 transition-colors"
+              className="rounded-lg border border-border bg-muted/60 p-3 flex flex-col items-center gap-2 hover:bg-muted/80 transition-colors cursor-pointer"
+              onClick={() => setSelected(b)}
             >
               {/* Image + hypercharge badge */}
               <div className="relative w-16 h-16 shrink-0">
@@ -209,6 +220,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
         </p>
       )}
     </section>
+    </>
   );
 }
 

@@ -18,6 +18,9 @@ export interface Brawler {
   starPowers: { id: number; name: string }[];
   gadgets: { id: number; name: string }[];
   hyperCharges?: { id: number; name: string }[];
+  currentWinStreak?: number;
+  maxWinStreak?: number;
+  prestigeLevel?: number;
 }
 
 export interface Player {
