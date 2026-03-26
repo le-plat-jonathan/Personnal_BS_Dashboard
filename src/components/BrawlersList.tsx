@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { getBrawlerImageUrl } from "@/lib/brawlify";
 import type { Brawler } from "@/types/brawlstars";
-import type { BrawlifyBrawler } from "@/types/brawlify";
+import type { BrawlifyBrawler, BrawlifyAbility } from "@/types/brawlify";
 
 interface Props {
   brawlers: Brawler[];
@@ -124,8 +124,6 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
         {filtered.map((b) => {
           const meta = brawlifyData[b.id];
           const rarityColor = meta?.rarity.color ?? "#888";
-          const totalSP = meta?.starPowers.length ?? 2;
-          const totalGadgets = meta?.gadgets.length ?? 2;
 
           return (
             <div
@@ -185,24 +183,20 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
               <PowerBar power={b.power} />
 
               {/* Star Powers + Gadgets */}
-              <div className="w-full flex justify-between text-[10px] text-muted-foreground">
-                <div className="flex items-center gap-1">
-                  <span>SP</span>
-                  <Dots
-                    unlocked={b.starPowers.length}
-                    total={totalSP}
-                    color="#f9c74f"
+              {meta && (
+                <div className="w-full space-y-1">
+                  <AbilityIcons
+                    available={meta.starPowers}
+                    unlockedIds={b.starPowers.map((s) => s.id)}
+                    label="SP"
+                  />
+                  <AbilityIcons
+                    available={meta.gadgets}
+                    unlockedIds={b.gadgets.map((g) => g.id)}
+                    label="Gad"
                   />
                 </div>
-                <div className="flex items-center gap-1">
-                  <span>Gad</span>
-                  <Dots
-                    unlocked={b.gadgets.length}
-                    total={totalGadgets}
-                    color="#90e0ef"
-                  />
-                </div>
-              </div>
+              )}
 
               {/* Gears */}
               {b.gears.length > 0 && (
@@ -255,25 +249,39 @@ function FilterBtn({
   );
 }
 
-function Dots({
-  unlocked,
-  total,
-  color,
+function AbilityIcons({
+  available,
+  unlockedIds,
+  label,
 }: {
-  unlocked: number;
-  total: number;
-  color: string;
+  available: BrawlifyAbility[];
+  unlockedIds: number[];
+  label: string;
 }) {
+  if (available.length === 0) return null;
   return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: total }).map((_, i) => (
-        <div
-          key={i}
-          className="w-2 h-2 rounded-full"
-          style={{ backgroundColor: i < unlocked ? color : "var(--muted-foreground)" }}
-          title={i < unlocked ? "Débloqué" : "Manquant"}
-        />
-      ))}
+    <div className="w-full flex items-center gap-1">
+      <span className="text-[9px] text-muted-foreground w-5 shrink-0">{label}</span>
+      <div className="flex gap-1">
+        {available.map((ability) => {
+          const unlocked = unlockedIds.includes(ability.id);
+          return (
+            <div
+              key={ability.id}
+              className="relative w-5 h-5"
+              title={unlocked ? ability.name : `${ability.name} (manquant)`}
+            >
+              <Image
+                src={ability.imageUrl}
+                alt={ability.name}
+                fill
+                className={`object-contain ${unlocked ? "" : "grayscale opacity-30"}`}
+                unoptimized
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
