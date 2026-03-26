@@ -198,20 +198,6 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
                 </div>
               )}
 
-              {/* Gears */}
-              {b.gears.length > 0 && (
-                <div className="w-full flex flex-wrap gap-1 justify-center">
-                  {b.gears.map((g) => (
-                    <span
-                      key={g.name}
-                      className="text-[9px] bg-background px-1.5 py-0.5 rounded border border-border text-foreground"
-                      title={`${g.name} niv.${g.level}`}
-                    >
-                      {g.name} {g.level}
-                    </span>
-                  ))}
-                </div>
-              )}
             </div>
           );
         })}
