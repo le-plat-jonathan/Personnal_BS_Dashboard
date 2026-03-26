@@ -184,7 +184,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
 
               {/* Star Powers + Gadgets */}
               {meta && (
-                <div className="w-full space-y-1">
+                <div className="w-full flex justify-between items-center">
                   <AbilityIcons
                     available={meta.starPowers}
                     unlockedIds={b.starPowers.map((s) => s.id)}
