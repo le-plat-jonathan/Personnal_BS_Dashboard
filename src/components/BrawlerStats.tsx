@@ -1,10 +1,7 @@
 import type { Brawler } from "@/types/brawlstars";
-import type { BrawlifyMap } from "@/types/brawlify";
-import { RARITY_ORDER } from "@/lib/brawlify";
 
 interface Props {
   brawlers: Brawler[];
-  brawlifyMap: BrawlifyMap;
 }
 
 const MILESTONES = [
@@ -14,7 +11,7 @@ const MILESTONES = [
   { min: 300, label: "300+", color: "text-foreground/70", bar: "bg-foreground/40" },
 ];
 
-export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
+export default function BrawlerStats({ brawlers }: Props) {
   const total = brawlers.length;
 
   // Trophy milestones
@@ -25,18 +22,6 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
     count: brawlers.filter((b) => b.trophies >= min).length,
   }));
 
-  // By rarity
-  const rarityMap = new Map<string, { color: string; count: number }>();
-  for (const b of brawlers) {
-    const meta = brawlifyMap.get(b.id);
-    const rarity = meta?.rarity.name ?? "Unknown";
-    const color = meta?.rarity.color ?? "#888";
-    const prev = rarityMap.get(rarity);
-    rarityMap.set(rarity, { color, count: (prev?.count ?? 0) + 1 });
-  }
-  const rarities = [...rarityMap.entries()]
-    .sort(([a], [b]) => (RARITY_ORDER[a] ?? 0) - (RARITY_ORDER[b] ?? 0));
-
   // By power level
   const powerMap = new Map<number, number>();
   for (const b of brawlers) {
@@ -46,7 +31,7 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
   const maxPowerCount = Math.max(...powers.map(([, c]) => c));
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {/* Trophy milestones */}
       <section className="glass p-5">
         <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
@@ -64,32 +49,6 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
                   className={`h-1.5 rounded-full ${bar}`}
                   style={{ width: `${(count / total) * 100}%` }}
                 />
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* By rarity */}
-      <section className="glass p-5">
-        <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
-          Par rareté
-        </h3>
-        <div className="space-y-2">
-          {rarities.map(([rarity, { color, count }]) => (
-            <div key={rarity} className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                <span className="text-sm text-muted-foreground truncate">{rarity}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-16 h-1.5 rounded-full bg-foreground/10">
-                  <div
-                    className="h-1.5 rounded-full"
-                    style={{ backgroundColor: color, width: `${(count / total) * 100}%` }}
-                  />
-                </div>
-                <span className="text-sm font-bold w-6 text-right" style={{ color }}>{count}</span>
               </div>
             </div>
           ))}

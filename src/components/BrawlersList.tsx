@@ -15,15 +15,6 @@ interface Props {
 type Filter = "all" | "hypercharge" | string;
 type SortKey = "trophies_desc" | "trophies_asc" | "name" | "power";
 
-function rankColor(rank: number): string {
-  if (rank >= 35) return "#ff6fcf";
-  if (rank >= 25) return "#c77dff";
-  if (rank >= 20) return "#9d4edd";
-  if (rank >= 15) return "#4361ee";
-  if (rank >= 10) return "#f9c74f";
-  return "#adb5bd";
-}
-
 const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "trophies_desc", label: "🏆 Max" },
   { value: "trophies_asc", label: "🏆 Min" },
@@ -51,7 +42,11 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
     switch (sort) {
       case "trophies_asc": return a.trophies - b.trophies;
       case "name": return a.name.localeCompare(b.name);
-      case "power": return b.power - a.power;
+      // Decroissant, puis departage par trophees. Sans ce second critere les
+      // dizaines de brawlers a puissance egale (11 est le plafond) se suivent
+      // dans l'ordre de l'API, et la liste donne l'impression de n'etre pas
+      // triee du tout.
+      case "power": return b.power - a.power || b.trophies - a.trophies;
       default: return b.trophies - a.trophies;
     }
   });
@@ -134,6 +129,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
         {filtered.map((b) => {
           const meta = brawlifyData[b.id];
           const rarityColor = meta?.rarity.color ?? "#888";
+          const hasHypercharge = Boolean(b.hyperCharges && b.hyperCharges.length > 0);
 
           return (
             <div
@@ -141,7 +137,8 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
               className="glass-inset p-3 flex flex-col items-center gap-2 transition-transform hover:-translate-y-0.5 cursor-pointer"
               onClick={() => setSelected(b)}
             >
-              {/* Image + hypercharge badge */}
+              {/* L'hypercharge est signalee par la couleur de la pastille de
+                  niveau, plus bas : inutile de la repeter sur l'illustration. */}
               <div className="relative w-16 h-16 shrink-0">
                 <Image
                   src={meta?.imageUrl ?? getBrawlerImageUrl(b.id)}
@@ -150,12 +147,6 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
                   className="object-contain drop-shadow-md"
                   unoptimized
                 />
-                {b.hyperCharges && b.hyperCharges.length > 0 && (
-                  <span
-                    className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-violet-400 border-2 border-card"
-                    title={`Hypercharge : ${b.hyperCharges[0].name}`}
-                  />
-                )}
               </div>
 
               {/* Name + rarity + class */}
@@ -176,17 +167,18 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
                 )}
               </div>
 
-              {/* Trophies + rank */}
+              {/* Trophies + niveau de puissance */}
               <div className="w-full flex justify-between items-center text-xs">
                 <span className="font-display tabular font-extrabold text-amber-600 dark:text-amber-300">
                   🏆 {b.trophies.toLocaleString()}
                 </span>
                 <span
-                  className="font-bold rounded-full w-6 h-6 flex items-center justify-center text-white text-[10px]"
-                  style={{ backgroundColor: rankColor(b.rank) }}
-                  title={`Rang ${b.rank}`}
+                  className={`font-display tabular font-extrabold rounded-full w-6 h-6 flex items-center justify-center text-white text-[10px] ${
+                    hasHypercharge ? "bg-violet-500" : "bg-amber-500"
+                  }`}
+                  title={`Niveau ${b.power}${hasHypercharge ? ` · Hypercharge : ${b.hyperCharges?.[0]?.name ?? "débloquée"}` : ""}`}
                 >
-                  {b.rank}
+                  {b.power}
                 </span>
               </div>
 
@@ -287,7 +279,6 @@ function AbilityIcons({
 function PowerBar({ power }: { power: number }) {
   return (
     <div className="w-full flex items-center gap-1">
-      <span className="text-[10px] text-muted-foreground shrink-0">P{power}</span>
       <div className="flex-1 flex gap-px">
         {Array.from({ length: 11 }).map((_, i) => (
           <div

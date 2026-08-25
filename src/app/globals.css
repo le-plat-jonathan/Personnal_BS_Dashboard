@@ -182,9 +182,22 @@
     @apply bg-background text-foreground;
   }
   html {
+    /* Previent le navigateur que l'interface est sombre. Sans ca, tout ce que
+       le systeme dessine lui-meme — menu deroulant des <select>, barres de
+       defilement, autocompletion — reste en clair. */
+    color-scheme: dark;
     @apply font-sans;
   }
 
+  /* Le menu deroulant d'un <select> est peint par le systeme : il ignore le
+     verre et le fond de l'element. Sur desktop il tombait en blanc alors que
+     le texte heritait du blanc de la page, d'ou des options invisibles hors
+     survol. On force donc une couleur opaque : ni degrade ni flou n'y sont
+     applicables. La teinte reprend celle de l'aurora pour rester dans le ton. */
+  select option {
+    background-color: oklch(0.2 0.05 293);
+    color: var(--foreground);
+  }
 }
 
 /* Le fond aurora.

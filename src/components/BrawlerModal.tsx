@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { getBrawlerImageUrl } from "@/lib/brawlify";
 import type { Brawler } from "@/types/brawlstars";
 import type { BrawlifyBrawler, BrawlifyAbility } from "@/types/brawlify";
 
@@ -10,15 +11,6 @@ interface Props {
   brawler: Brawler;
   meta: BrawlifyBrawler | undefined;
   onClose: () => void;
-}
-
-function rankColor(rank: number): string {
-  if (rank >= 35) return "#ff6fcf";
-  if (rank >= 25) return "#c77dff";
-  if (rank >= 20) return "#9d4edd";
-  if (rank >= 15) return "#4361ee";
-  if (rank >= 10) return "#f9c74f";
-  return "#adb5bd";
 }
 
 export default function BrawlerModal({ brawler, meta, onClose }: Props) {
@@ -51,15 +43,13 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
         {/* Header */}
         <div className="flex items-center gap-5 p-6 border-b border-border">
           <div className="relative w-24 h-24 shrink-0">
-            {meta && (
-              <Image
-                src={meta.imageUrl}
-                alt={brawler.name}
-                fill
-                className="object-contain drop-shadow-xl"
-                unoptimized
-              />
-            )}
+            <Image
+              src={meta?.imageUrl ?? getBrawlerImageUrl(brawler.id)}
+              alt={brawler.name}
+              fill
+              className="object-contain drop-shadow-xl"
+              unoptimized
+            />
           </div>
           <div>
             <h2 className="text-xl font-black uppercase tracking-wide">{brawler.name}</h2>
@@ -89,21 +79,12 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
           {/* Stats */}
           <div className="grid grid-cols-2 gap-3">
             <StatBlock label="Trophées" value={`🏆 ${brawler.trophies.toLocaleString()}`} />
-            <StatBlock label="Record" value={`🏆 ${brawler.highestTrophies.toLocaleString()}`} />
-            <StatBlock
-              label="Rang"
-              value={`${brawler.rank}`}
-              valueColor={rankColor(brawler.rank)}
-            />
             <StatBlock label="Puissance" value={`P${brawler.power}`} />
             {brawler.currentWinStreak != null && (
               <StatBlock label="Série actuelle" value={`${brawler.currentWinStreak}`} />
             )}
             {brawler.maxWinStreak != null && (
               <StatBlock label="Meilleure série" value={`${brawler.maxWinStreak}`} />
-            )}
-            {brawler.prestigeLevel != null && brawler.prestigeLevel > 0 && (
-              <StatBlock label="Prestige" value={`${brawler.prestigeLevel}`} />
             )}
           </div>
 
