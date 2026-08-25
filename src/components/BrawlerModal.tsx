@@ -3,17 +3,20 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { Zap } from "lucide-react";
 import { getBrawlerImageUrl } from "@/lib/brawlify";
-import type { Brawler } from "@/types/brawlstars";
-import type { BrawlifyBrawler, BrawlifyAbility } from "@/types/brawlify";
+import { buildLoadout, iconUrl, type LoadoutItem } from "@/lib/loadout";
+import type { Brawler, CatalogueBrawler } from "@/types/brawlstars";
+import type { BrawlifyBrawler } from "@/types/brawlify";
 
 interface Props {
   brawler: Brawler;
   meta: BrawlifyBrawler | undefined;
+  catalogue: CatalogueBrawler | undefined;
   onClose: () => void;
 }
 
-export default function BrawlerModal({ brawler, meta, onClose }: Props) {
+export default function BrawlerModal({ brawler, meta, catalogue, onClose }: Props) {
   // Fermer avec Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -22,6 +25,7 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
   }, [onClose]);
 
   const rarityColor = meta?.rarity.color ?? "#888";
+  const loadout = buildLoadout(brawler, catalogue);
 
   return createPortal(
     <div
@@ -32,9 +36,9 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
         className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto glass-modal"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Close button */}
         <button
           onClick={onClose}
+          aria-label="Fermer"
           className="absolute top-3 right-3 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-muted text-muted-foreground hover:text-foreground transition-colors"
         >
           ✕
@@ -52,7 +56,9 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
             />
           </div>
           <div>
-            <h2 className="text-xl font-black uppercase tracking-wide">{brawler.name}</h2>
+            <h2 className="font-display text-xl font-extrabold uppercase tracking-wide">
+              {brawler.name}
+            </h2>
             {meta && (
               <div className="flex items-center gap-2 mt-1 text-sm flex-wrap">
                 <span style={{ color: rarityColor }}>{meta.rarity.name}</span>
@@ -62,14 +68,6 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
                     <span className="text-muted-foreground">{meta.class.name}</span>
                   </>
                 )}
-              </div>
-            )}
-            {brawler.hyperCharges && brawler.hyperCharges.length > 0 && (
-              <div className="mt-1.5 flex items-center gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-violet-400 inline-block" />
-                <span className="text-xs text-violet-400 font-medium">
-                  Hypercharge : {brawler.hyperCharges[0].name}
-                </span>
               </div>
             )}
           </div>
@@ -88,23 +86,14 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
             )}
           </div>
 
-          {/* Star Powers */}
-          {meta && meta.starPowers.length > 0 && (
-            <AbilitySection
-              title="Star Powers"
-              abilities={meta.starPowers}
-              unlockedIds={brawler.starPowers.map((s) => s.id)}
-            />
-          )}
-
-          {/* Gadgets */}
-          {meta && meta.gadgets.length > 0 && (
-            <AbilitySection
-              title="Gadgets"
-              abilities={meta.gadgets}
-              unlockedIds={brawler.gadgets.map((g) => g.id)}
-            />
-          )}
+          <LoadoutGrid title="Star Powers" items={loadout.starPowers} icon={iconUrl.starPower} />
+          <LoadoutGrid title="Gadgets" items={loadout.gadgets} icon={iconUrl.gadget} />
+          <LoadoutGrid title="Équipements" items={loadout.gears} icon={iconUrl.gear} />
+          {/* `icon` a null : le CDN Brawlify ne publie aucune image pour les
+              hypercharges, contrairement aux trois autres familles. Verifie le
+              2026-08-25, une vingtaine de chemins essayes. La vignette se rabat
+              sur un pictogramme d'eclair. */}
+          <LoadoutGrid title="Hypercharge" items={loadout.hyperCharges} icon={null} />
         </div>
       </div>
     </div>,
@@ -112,78 +101,78 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
   );
 }
 
-function StatBlock({
-  label,
-  value,
-  valueColor,
-}: {
-  label: string;
-  value: string;
-  valueColor?: string;
-}) {
+function StatBlock({ label, value }: { label: string; value: string }) {
   return (
     <div className="glass-inset px-3 py-2">
       <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">
         {label}
       </div>
-      <div className="text-sm font-bold" style={{ color: valueColor }}>
-        {value}
-      </div>
+      <div className="font-display tabular text-sm font-bold">{value}</div>
     </div>
   );
 }
 
-function AbilitySection({
+/**
+ * Une grille d'objets : ceux que le joueur possede en couleur, ceux qui lui
+ * manquent en gris et estompes.
+ *
+ * Meme rendu pour les quatre familles, c'est ce qui permet de comparer d'un
+ * coup d'oeil ce qui reste a debloquer sur un brawler.
+ */
+function LoadoutGrid({
   title,
-  abilities,
-  unlockedIds,
+  items,
+  icon,
 }: {
   title: string;
-  abilities: BrawlifyAbility[];
-  unlockedIds: number[];
+  items: LoadoutItem[];
+  icon: ((id: number) => string) | null;
 }) {
+  if (items.length === 0) return null;
+
   return (
     <div>
       <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-3">
         {title}
       </h3>
-      <div className="space-y-2">
-        {abilities.map((ability) => {
-          const unlocked = unlockedIds.includes(ability.id);
-          return (
-            <div
-              key={ability.id}
-              className={`flex items-start gap-3 rounded-lg p-3 border ${
-                unlocked
-                  ? "border-border bg-muted/40"
-                  : "border-border/40 bg-muted/20 opacity-50"
-              }`}
-            >
-              <div className="relative w-10 h-10 shrink-0">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+        {items.map((item) => (
+          <div
+            key={item.id}
+            className={`glass-inset flex flex-col items-center gap-1 p-2 text-center ${
+              item.owned ? "" : "opacity-40"
+            }`}
+            title={item.owned ? item.name : `${item.name} · pas encore débloqué`}
+          >
+            <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
+              {icon ? (
                 <Image
-                  src={ability.imageUrl}
-                  alt={ability.name}
+                  src={icon(item.id)}
+                  alt={item.name}
                   fill
-                  className={`object-contain ${unlocked ? "" : "grayscale"}`}
+                  className={`object-contain ${item.owned ? "" : "grayscale"}`}
                   unoptimized
                 />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-sm font-semibold flex items-center gap-2">
-                  {ability.name}
-                  {!unlocked && (
-                    <span className="text-[10px] text-muted-foreground font-normal">
-                      (manquant)
-                    </span>
-                  )}
-                </div>
-                <div className="text-xs text-muted-foreground mt-0.5 leading-relaxed">
-                  {ability.description}
-                </div>
-              </div>
+              ) : (
+                // Repli des hypercharges : le CDN n'en publie aucune image,
+                // contrairement aux trois autres familles.
+                <Zap
+                  className={`w-7 h-7 ${
+                    item.owned
+                      ? "text-violet-400 fill-violet-400/30"
+                      : "text-muted-foreground"
+                  }`}
+                />
+              )}
             </div>
-          );
-        })}
+            <span className="text-[10px] leading-tight uppercase">{item.name}</span>
+            {item.level != null && (
+              <span className="font-display tabular text-[10px] font-bold text-amber-300">
+                N{item.level}
+              </span>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

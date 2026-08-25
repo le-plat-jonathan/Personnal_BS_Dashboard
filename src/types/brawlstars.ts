@@ -14,7 +14,8 @@ export interface Brawler {
   rank: number;
   trophies: number;
   highestTrophies: number;
-  gears: { name: string; level: number }[];
+  // L'API renvoie bien un `id` (ex. 62000002), il manquait dans ce type.
+  gears: { id: number; name: string; level: number }[];
   starPowers: { id: number; name: string }[];
   gadgets: { id: number; name: string }[];
   hyperCharges?: { id: number; name: string }[];
@@ -80,4 +81,20 @@ export interface BattleLogItem {
 
 export interface BattleLog {
   items: BattleLogItem[];
+}
+
+/**
+ * Entree du catalogue officiel (`/v1/brawlers`) : la liste COMPLETE de ce
+ * qu'un brawler peut posseder, la ou l'objet Brawler d'un joueur ne liste que
+ * ce qu'il a deja. C'est ce qui permet de griser ce qui manque — et notamment
+ * de savoir quels equipements sont eligibles, ce qui varie d'un brawler a
+ * l'autre (NITA a PET POWER, COLT a RELOAD SPEED).
+ */
+export interface CatalogueBrawler {
+  id: number;
+  name: string;
+  starPowers: { id: number; name: string }[];
+  gadgets: { id: number; name: string }[];
+  gears: { id: number; name: string; level: number }[];
+  hyperCharges: { id: number; name: string }[];
 }

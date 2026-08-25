@@ -1,4 +1,4 @@
-import type { Player, BattleLog } from "@/types/brawlstars";
+import type { Player, BattleLog, CatalogueBrawler } from "@/types/brawlstars";
 
 const BASE_URL = process.env.BRAWL_STARS_API_BASE!;
 const API_KEY = process.env.BRAWL_STARS_API_KEY!;
@@ -27,4 +27,20 @@ export async function getPlayer(tag: string): Promise<Player> {
 export async function getBattleLog(tag: string): Promise<BattleLog> {
   const encoded = encodeURIComponent(tag);
   return bsGet<BattleLog>(`/players/${encoded}/battlelog`);
+}
+
+let catalogueCache: Map<number, CatalogueBrawler> | null = null;
+
+/**
+ * Catalogue officiel de tous les brawlers et de ce qu'ils peuvent posseder.
+ *
+ * Remplace l'API Brawlify, devenue inutilisable cote serveur : elle repond
+ * desormais par une page « Security Check » a toute requete automatisee,
+ * quels que soient les en-tetes. Son CDN d'images, lui, reste accessible.
+ */
+export async function getBrawlerCatalogue(): Promise<Map<number, CatalogueBrawler>> {
+  if (catalogueCache) return catalogueCache;
+  const data = await bsGet<{ items: CatalogueBrawler[] }>("/brawlers");
+  catalogueCache = new Map(data.items.map((b) => [b.id, b]));
+  return catalogueCache;
 }

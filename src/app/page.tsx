@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PLAYERS, getPlayerById, normalizeTag } from "@/lib/players";
-import { getPlayer, getBattleLog } from "@/lib/brawlstars";
+import { getPlayer, getBattleLog, getBrawlerCatalogue } from "@/lib/brawlstars";
 import { getBrawlifyMap } from "@/lib/brawlify";
 import PlayerProfile from "@/components/PlayerProfile";
 import BrawlersList from "@/components/BrawlersList";
@@ -55,10 +55,17 @@ export default async function Home({ searchParams }: PageProps) {
 }
 
 async function PlayerDashboard({ tag }: { tag: string }) {
-  const [playerResult, battleLogResult, brawlifyMapResult] = await Promise.all([
+  const [playerResult, battleLogResult, catalogueResult, brawlifyMapResult] = await Promise.all([
     getPlayer(tag).catch((e: Error) => e),
     getBattleLog(tag).catch((e: Error) => e),
-    getBrawlifyMap().catch(() => new Map()),
+    getBrawlerCatalogue().catch((e: Error) => {
+      console.error("[BS Dashboard] getBrawlerCatalogue a echoue :", e.message);
+      return new Map();
+    }),
+    getBrawlifyMap().catch((e: Error) => {
+      console.error("[BS Dashboard] getBrawlifyMap a echoue :", e.message);
+      return new Map();
+    }),
   ]);
 
   if (playerResult instanceof Error) {
@@ -84,6 +91,7 @@ async function PlayerDashboard({ tag }: { tag: string }) {
   const player = playerResult;
   const battleLog = battleLogResult instanceof Error ? { items: [] } : battleLogResult;
   const brawlifyMap = brawlifyMapResult instanceof Map ? brawlifyMapResult : new Map();
+  const catalogue = catalogueResult instanceof Map ? catalogueResult : new Map();
 
   return (
     <div className="space-y-6">
@@ -100,6 +108,7 @@ async function PlayerDashboard({ tag }: { tag: string }) {
       <BrawlersList
         brawlers={player.brawlers}
         brawlifyData={Object.fromEntries(brawlifyMap) as Record<number, import("@/types/brawlify").BrawlifyBrawler>}
+        catalogue={Object.fromEntries(catalogue) as Record<number, import("@/types/brawlstars").CatalogueBrawler>}
       />
     </div>
   );

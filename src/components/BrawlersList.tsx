@@ -3,13 +3,14 @@
 import { useState } from "react";
 import Image from "next/image";
 import { getBrawlerImageUrl } from "@/lib/brawlify";
-import type { Brawler } from "@/types/brawlstars";
+import type { Brawler, CatalogueBrawler } from "@/types/brawlstars";
 import type { BrawlifyBrawler, BrawlifyAbility } from "@/types/brawlify";
 import BrawlerModal from "@/components/BrawlerModal";
 
 interface Props {
   brawlers: Brawler[];
   brawlifyData: Record<number, BrawlifyBrawler>;
+  catalogue: Record<number, CatalogueBrawler>;
 }
 
 type Filter = "all" | "hypercharge" | string;
@@ -22,7 +23,7 @@ const SORT_OPTIONS: { value: SortKey; label: string }[] = [
   { value: "power", label: "Niveau" },
 ];
 
-export default function BrawlersList({ brawlers, brawlifyData }: Props) {
+export default function BrawlersList({ brawlers, brawlifyData, catalogue }: Props) {
   const [filter, setFilter] = useState<Filter>("all");
   const [sort, setSort] = useState<SortKey>("trophies_desc");
   const [search, setSearch] = useState("");
@@ -64,6 +65,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
       <BrawlerModal
         brawler={selected}
         meta={brawlifyData[selected.id]}
+        catalogue={catalogue[selected.id]}
         onClose={() => setSelected(null)}
       />
     )}
