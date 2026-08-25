@@ -1,0 +1,6 @@
+# Scripts de build ignorés : les binaires précompilés fournis par les
+# dépendances optionnelles suffisent (même configuration que Promptimo).
+ignoredBuiltDependencies:
+  - msw
+  - sharp
+  - unrs-resolver

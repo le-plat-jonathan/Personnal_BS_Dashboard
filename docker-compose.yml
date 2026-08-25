@@ -1,0 +1,25 @@
+# Stack applicative du BS Dashboard.
+#
+# Le HTTPS est assuré par le reverse proxy partagé du VPS (/var/www/caddy,
+# repo vps-infra), pas par cette stack. L'app n'est joignable que sur la
+# loopback : tout le trafic public passe forcément par Caddy.
+
+services:
+  app:
+    build: .
+    container_name: bs-dashboard
+    restart: unless-stopped
+
+    # host : cohérent avec les autres apps du VPS, et permet à Caddy de
+    # joindre l'app sur 127.0.0.1 sans réseau Docker partagé.
+    network_mode: host
+
+    env_file:
+      - .env
+
+    environment:
+      # Port 3001 : le 3000 est pris par Promptimo (cf. le tableau des
+      # ports dans le README de vps-infra).
+      PORT: 3001
+      # Loopback uniquement : le port 3001 n'est pas joignable de l'extérieur.
+      HOSTNAME: 127.0.0.1
