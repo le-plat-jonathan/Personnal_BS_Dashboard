@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Zap } from "lucide-react";
@@ -25,7 +25,7 @@ export default function BrawlerModal({ brawler, meta, catalogue, onClose }: Prop
   }, [onClose]);
 
   const rarityColor = meta?.rarity.color ?? "#888";
-  const loadout = buildLoadout(brawler, catalogue);
+  const loadout = buildLoadout(brawler, catalogue, meta);
 
   return createPortal(
     <div
@@ -128,7 +128,11 @@ function LoadoutGrid({
   items: LoadoutItem[];
   icon: ((id: number) => string) | null;
 }) {
+  const [openId, setOpenId] = useState<number | null>(null);
+
   if (items.length === 0) return null;
+
+  const open = items.find((i) => i.id === openId);
 
   return (
     <div>
@@ -136,44 +140,65 @@ function LoadoutGrid({
         {title}
       </h3>
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={`glass-inset flex flex-col items-center gap-1 p-2 text-center ${
-              item.owned ? "" : "opacity-40"
-            }`}
-            title={item.owned ? item.name : `${item.name} · pas encore débloqué`}
-          >
-            <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
-              {icon ? (
-                <Image
-                  src={icon(item.id)}
-                  alt={item.name}
-                  fill
-                  className={`object-contain ${item.owned ? "" : "grayscale"}`}
-                  unoptimized
-                />
-              ) : (
-                // Repli des hypercharges : le CDN n'en publie aucune image,
-                // contrairement aux trois autres familles.
-                <Zap
-                  className={`w-7 h-7 ${
-                    item.owned
-                      ? "text-violet-400 fill-violet-400/30"
-                      : "text-muted-foreground"
-                  }`}
-                />
-              )}
-            </div>
-            <span className="text-[10px] leading-tight uppercase">{item.name}</span>
-            {item.level != null && (
-              <span className="font-display tabular text-[10px] font-bold text-amber-300">
-                N{item.level}
-              </span>
-            )}
-          </div>
-        ))}
+        {items.map((item) => {
+          // Cliquable seulement si une description existe. Les hypercharges
+          // n'en ont aucune, et parmi les equipements seuls ceux saisis dans
+          // GEAR_DESCRIPTIONS en ont : rendre les autres cliquables
+          // promettrait un detail qui n'arriverait jamais.
+          const clickable = Boolean(item.description);
+          const selected = item.id === openId;
+
+          return (
+            <button
+              key={item.id}
+              type="button"
+              disabled={!clickable}
+              aria-expanded={clickable ? selected : undefined}
+              onClick={() => setOpenId(selected ? null : item.id)}
+              className={`glass-inset flex flex-col items-center gap-1 p-2 text-center transition-transform ${
+                item.owned ? "" : "opacity-40"
+              } ${clickable ? "cursor-pointer hover:-translate-y-0.5" : "cursor-default"} ${
+                selected ? "ring-2 ring-ring" : ""
+              }`}
+              title={item.owned ? item.name : `${item.name} · pas encore débloqué`}
+            >
+              <div className="relative w-10 h-10 shrink-0 flex items-center justify-center">
+                {icon ? (
+                  <Image
+                    src={icon(item.id)}
+                    alt={item.name}
+                    fill
+                    className={`object-contain ${item.owned ? "" : "grayscale"}`}
+                    unoptimized
+                  />
+                ) : (
+                  // Repli des hypercharges : le CDN n'en publie aucune image,
+                  // contrairement aux trois autres familles.
+                  <Zap
+                    className={`w-7 h-7 ${
+                      item.owned
+                        ? "text-violet-400 fill-violet-400/30"
+                        : "text-muted-foreground"
+                    }`}
+                  />
+                )}
+              </div>
+              <span className="text-[10px] leading-tight uppercase">{item.name}</span>
+            </button>
+          );
+        })}
       </div>
+
+      {open?.description && (
+        <div className="glass-inset mt-2 px-3 py-2">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mb-0.5">
+            {open.name}
+          </div>
+          <p className="text-xs leading-relaxed text-muted-foreground">
+            {open.description}
+          </p>
+        </div>
+      )}
     </div>
   );
 }

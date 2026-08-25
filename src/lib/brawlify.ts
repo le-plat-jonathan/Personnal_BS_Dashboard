@@ -5,13 +5,12 @@ let cache: BrawlifyMap | null = null;
 export async function getBrawlifyMap(): Promise<BrawlifyMap> {
   if (cache) return cache;
 
-  const res = await fetch("https://api.brawlify.com/v1/brawlers", {
-    // NOTE 2026-08-25 : cet appel echoue systematiquement en 403. Brawlify a
-    // place son API derriere un challenge anti-bot (« Security Check »), qu'un
-    // User-Agent de navigateur ne suffit pas a passer — il faudrait executer du
-    // JavaScript. Seules la rarete et la classe en dependent encore ; le reste
-    // vient desormais du catalogue officiel (getBrawlerCatalogue), et les
-    // images du CDN Brawlify, qui reste libre d'acces.
+  // `api.brawlapi.com` et non `api.brawlify.com` : le domaine recent a ete
+  // place derriere un challenge anti-bot (« Security Check ») qui refuse toute
+  // requete serveur, quels que soient les en-tetes. L'ancien domaine sert les
+  // memes donnees sans blocage. Il est hérité, donc considere comme faillible :
+  // l'appelant journalise l'echec et se rabat proprement.
+  const res = await fetch("https://api.brawlapi.com/v1/brawlers", {
     next: { revalidate: 86400 }, // cache 24h
   });
 
