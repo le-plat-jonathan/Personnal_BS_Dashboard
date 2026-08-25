@@ -7,7 +7,6 @@ import PlayerProfile from "@/components/PlayerProfile";
 import BrawlersList from "@/components/BrawlersList";
 import BattleLog from "@/components/BattleLog";
 import PlayerSwitcher from "@/components/PlayerSwitcher";
-import ThemeToggle from "@/components/ThemeToggle";
 import TopBrawlers from "@/components/TopBrawlers";
 import BrawlerStats from "@/components/BrawlerStats";
 
@@ -26,12 +25,9 @@ export default async function Home({ searchParams }: PageProps) {
     <main className="relative z-10 min-h-screen text-foreground overflow-x-hidden">
       {/* Header */}
       <header className="glass-bar sticky top-0 z-20">
-        <div className="container mx-auto px-4 max-w-6xl h-14 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <span className="font-display text-lg font-extrabold tracking-tight shrink-0">BS Dashboard</span>
-            <PlayerSwitcher players={PLAYERS} currentId={currentPlayer.id} />
-          </div>
-          <ThemeToggle />
+        <div className="container mx-auto px-4 max-w-6xl h-14 flex items-center gap-3 sm:gap-4">
+          <span className="font-display text-lg font-extrabold tracking-tight shrink-0">BS Dashboard</span>
+          <PlayerSwitcher players={PLAYERS} currentId={currentPlayer.id} />
         </div>
       </header>
 

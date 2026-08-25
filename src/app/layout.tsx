@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
-import ThemeProvider from "@/components/ThemeProvider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,16 +32,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
+    // `dark` en dur : le dashboard n'a plus qu'un theme. La classe reste
+    // indispensable, une trentaine de variantes `dark:` dans les composants en
+    // dependent. Plus de next-themes, donc plus de `suppressHydrationWarning`
+    // ni de bascule de classe apres l'hydratation.
     <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
-      suppressHydrationWarning
+      lang="fr"
+      className={`dark ${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col overflow-x-hidden">
         {/* Le decor que le verre floute. Purement visuel, donc masque aux
             lecteurs d'ecran. */}
         <div aria-hidden className="aurora" />
-        <ThemeProvider>{children}</ThemeProvider>
+        {children}
       </body>
     </html>
   );

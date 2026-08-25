@@ -56,6 +56,14 @@
    donc translucides (--card, --border, --muted exprimes en pourcentage
    d'opacite) et c'est le fond aurora, plus bas, qui fournit la couleur qui
    les traverse. Une surface opaque ici annulerait tout l'effet.
+
+   Le dashboard n'a plus qu'un theme : `dark` est pose en dur sur <html>
+   (cf. layout.tsx), donc le bloc `.dark` est le seul reellement applique.
+   `:root` reste la valeur de repli, jamais affichee, et conserve la palette
+   claire au cas ou le choix du theme reviendrait. La classe `dark` doit
+   rester : une trentaine de variantes `dark:` dans les composants en
+   dependent, les retirer ferait apparaitre les couleurs claires sur le fond
+   sombre.
 --------------------------------------------------------------------------- */
 
 :root {
