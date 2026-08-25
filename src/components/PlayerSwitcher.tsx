@@ -15,7 +15,7 @@ export default function PlayerSwitcher({ players, currentId }: Props) {
     <select
       value={currentId}
       onChange={(e) => router.push(`/?player=${e.target.value}`)}
-      className="rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
+      className="glass-inset px-3 py-1.5 text-sm font-medium text-foreground focus:outline-none focus:ring-2 focus:ring-ring cursor-pointer"
     >
       {players.map((p) => (
         <option key={p.id} value={p.id}>

@@ -33,11 +33,11 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/70 backdrop-blur-md"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl border border-border bg-card shadow-2xl"
+        className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto glass-modal"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
@@ -97,13 +97,13 @@ export default function BrawlerModal({ brawler, meta, onClose }: Props) {
             />
             <StatBlock label="Puissance" value={`P${brawler.power}`} />
             {brawler.currentWinStreak != null && (
-              <StatBlock label="Série actuelle" value={`🔥 ${brawler.currentWinStreak}`} />
+              <StatBlock label="Série actuelle" value={`${brawler.currentWinStreak}`} />
             )}
             {brawler.maxWinStreak != null && (
-              <StatBlock label="Meilleure série" value={`⚡ ${brawler.maxWinStreak}`} />
+              <StatBlock label="Meilleure série" value={`${brawler.maxWinStreak}`} />
             )}
             {brawler.prestigeLevel != null && brawler.prestigeLevel > 0 && (
-              <StatBlock label="Prestige" value={`✨ ${brawler.prestigeLevel}`} />
+              <StatBlock label="Prestige" value={`${brawler.prestigeLevel}`} />
             )}
           </div>
 
@@ -141,7 +141,7 @@ function StatBlock({
   valueColor?: string;
 }) {
   return (
-    <div className="rounded-lg bg-muted/60 px-3 py-2">
+    <div className="glass-inset px-3 py-2">
       <div className="text-[10px] text-muted-foreground uppercase tracking-wider mb-0.5">
         {label}
       </div>
@@ -163,7 +163,7 @@ function AbilitySection({
 }) {
   return (
     <div>
-      <h3 className="text-xs font-bold tracking-widest text-muted-foreground uppercase mb-3">
+      <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-3">
         {title}
       </h3>
       <div className="space-y-2">

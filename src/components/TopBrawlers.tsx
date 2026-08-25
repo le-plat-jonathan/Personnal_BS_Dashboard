@@ -28,9 +28,9 @@ export default function TopBrawlers({ brawlers, brawlifyMap }: Props) {
   const [first, second, third, ...rest] = top7;
 
   return (
-    <section className="rounded-xl border border-border bg-card p-6">
-      <h2 className="text-xs font-bold tracking-widest text-muted-foreground mb-6 uppercase flex items-center gap-2">
-        🏆 Les meilleurs bagarreurs
+    <section className="glass p-6">
+      <h2 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground mb-6 uppercase flex items-center gap-2">
+        🏆 Top 3 trophées
       </h2>
 
       {/* Podium top 3 */}
@@ -70,7 +70,6 @@ function PodiumCard({
 
   return (
     <div className={`flex flex-col items-center ${elevated ? "mb-8" : ""}`}>
-      {rank === 1 && <span className="text-2xl mb-1">👑</span>}
       <div className="relative w-20 h-20 mb-2">
         <Image
           src={meta?.imageUrl ?? imgUrl}
@@ -88,8 +87,8 @@ function PodiumCard({
         >
           {rank}
         </span>
-        <span className="font-bold text-sm uppercase tracking-wide">{brawler.name}</span>
-        <span className={`font-bold text-base ${rank === 1 ? "text-yellow-400" : "text-zinc-300"}`}>
+        <span className="font-display font-extrabold text-sm uppercase tracking-wide">{brawler.name}</span>
+        <span className={`font-display tabular font-extrabold text-base ${rank === 1 ? "text-amber-600 dark:text-amber-300" : "text-foreground/80"}`}>
           {brawler.trophies.toLocaleString()}
         </span>
       </div>
@@ -110,7 +109,7 @@ function SmallBrawlerCard({
   const imgUrl = getBrawlerImageUrl(brawler.id);
 
   return (
-    <div className="flex items-center gap-3 rounded-lg border border-border bg-muted/60 px-3 py-2">
+    <div className="flex items-center gap-3 glass-inset px-3 py-2">
       <span className="text-muted-foreground text-sm w-4 shrink-0">{rank}</span>
       <div className="relative w-10 h-10 shrink-0">
         <Image
@@ -122,8 +121,8 @@ function SmallBrawlerCard({
         />
       </div>
       <div className="min-w-0">
-        <div className="font-semibold text-sm truncate uppercase">{brawler.name}</div>
-        <div className="text-yellow-400 text-sm font-bold">{brawler.trophies.toLocaleString()}</div>
+        <div className="font-display font-bold text-sm truncate uppercase">{brawler.name}</div>
+        <div className="font-display tabular text-amber-600 dark:text-amber-300 text-sm font-extrabold">{brawler.trophies.toLocaleString()}</div>
       </div>
     </div>
   );

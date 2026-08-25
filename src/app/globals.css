@@ -7,9 +7,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-bricolage);
+  --font-display: var(--font-bricolage);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,73 +49,121 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ---------------------------------------------------------------------------
+   Palette Aurora Brawl
+
+   Le verre ne se voit que s'il a quelque chose a flouter. Les surfaces sont
+   donc translucides (--card, --border, --muted exprimes en pourcentage
+   d'opacite) et c'est le fond aurora, plus bas, qui fournit la couleur qui
+   les traverse. Une surface opaque ici annulerait tout l'effet.
+--------------------------------------------------------------------------- */
+
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: oklch(0.965 0.014 300);
+  --foreground: oklch(0.19 0.035 292);
+
+  --card: oklch(1 0 0 / 58%);
+  --card-foreground: oklch(0.19 0.035 292);
+  --popover: oklch(0.99 0.006 300 / 94%);
+  --popover-foreground: oklch(0.19 0.035 292);
+
+  --primary: oklch(0.55 0.24 296);
+  --primary-foreground: oklch(0.99 0.005 300);
+  --secondary: oklch(1 0 0 / 55%);
+  --secondary-foreground: oklch(0.24 0.05 294);
+
+  --muted: oklch(0.55 0.07 294 / 12%);
+  --muted-foreground: oklch(0.44 0.045 292);
+  --accent: oklch(0.66 0.22 350 / 16%);
+  --accent-foreground: oklch(0.28 0.09 340);
+
+  --destructive: oklch(0.58 0.23 25);
+  --border: oklch(1 0 0 / 65%);
+  --input: oklch(1 0 0 / 70%);
+  --ring: oklch(0.6 0.2 296);
+
+  --chart-1: oklch(0.62 0.24 350);
+  --chart-2: oklch(0.56 0.23 296);
+  --chart-3: oklch(0.66 0.14 205);
+  --chart-4: oklch(0.78 0.15 85);
+  --chart-5: oklch(0.5 0.08 292);
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  --sidebar: oklch(1 0 0 / 60%);
+  --sidebar-foreground: oklch(0.19 0.035 292);
+  --sidebar-primary: oklch(0.55 0.24 296);
+  --sidebar-primary-foreground: oklch(0.99 0.005 300);
+  --sidebar-accent: oklch(0.55 0.07 294 / 12%);
+  --sidebar-accent-foreground: oklch(0.24 0.05 294);
+  --sidebar-border: oklch(1 0 0 / 65%);
+  --sidebar-ring: oklch(0.6 0.2 296);
+
+  /* Halos du fond. En clair ils restent pales : le texte sombre doit rester
+     lisible par-dessus le verre blanc translucide. */
+  --aurora-magenta: oklch(0.78 0.16 350 / 0.5);
+  --aurora-violet: oklch(0.74 0.16 296 / 0.5);
+  --aurora-cyan: oklch(0.85 0.1 205 / 0.45);
+  --aurora-gold: oklch(0.9 0.11 88 / 0.4);
+
+  /* Recette du verre : fond, bord, ombre portee, et le lisere clair du haut
+     qui simule la tranche eclairee d'une plaque de verre. */
+  --glass-bg: oklch(1 0 0 / 0.55);
+  --glass-border: oklch(1 0 0 / 0.75);
+  --glass-highlight: oklch(1 0 0 / 0.9);
+  --glass-shadow: 0 10px 34px -12px oklch(0.35 0.09 300 / 0.3);
+  --glass-blur: 20px;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --background: oklch(0.145 0.038 292);
+  --foreground: oklch(0.97 0.008 300);
+
+  --card: oklch(1 0 0 / 6%);
+  --card-foreground: oklch(0.97 0.008 300);
+  --popover: oklch(0.2 0.045 293 / 94%);
+  --popover-foreground: oklch(0.97 0.008 300);
+
+  --primary: oklch(0.72 0.19 300);
+  --primary-foreground: oklch(0.16 0.04 292);
+  --secondary: oklch(1 0 0 / 10%);
+  --secondary-foreground: oklch(0.97 0.008 300);
+
+  --muted: oklch(1 0 0 / 9%);
+  --muted-foreground: oklch(0.76 0.03 296);
+  --accent: oklch(0.7 0.2 350 / 20%);
+  --accent-foreground: oklch(0.95 0.02 340);
+
+  --destructive: oklch(0.7 0.19 22);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --ring: oklch(0.7 0.18 300);
+
+  --chart-1: oklch(0.7 0.24 350);
+  --chart-2: oklch(0.68 0.22 298);
+  --chart-3: oklch(0.78 0.13 205);
+  --chart-4: oklch(0.85 0.15 88);
+  --chart-5: oklch(0.6 0.09 294);
+
+  --sidebar: oklch(1 0 0 / 6%);
+  --sidebar-foreground: oklch(0.97 0.008 300);
+  --sidebar-primary: oklch(0.72 0.19 300);
+  --sidebar-primary-foreground: oklch(0.16 0.04 292);
+  --sidebar-accent: oklch(1 0 0 / 9%);
+  --sidebar-accent-foreground: oklch(0.97 0.008 300);
+  --sidebar-border: oklch(1 0 0 / 12%);
+  --sidebar-ring: oklch(0.7 0.18 300);
+
+  --aurora-magenta: oklch(0.62 0.27 350 / 0.44);
+  --aurora-violet: oklch(0.55 0.26 296 / 0.5);
+  --aurora-cyan: oklch(0.68 0.16 205 / 0.34);
+  --aurora-gold: oklch(0.78 0.16 88 / 0.24);
+
+  --glass-bg: oklch(1 0 0 / 0.055);
+  --glass-border: oklch(1 0 0 / 0.12);
+  --glass-highlight: oklch(1 0 0 / 0.16);
+  --glass-shadow: 0 12px 40px -14px oklch(0 0 0 / 0.65);
+  --glass-blur: 22px;
 }
 
 @layer base {
@@ -126,5 +175,158 @@
   }
   html {
     @apply font-sans;
+  }
+
+}
+
+/* Le fond aurora.
+
+   Element reel plutot que pseudo-element en `z-index: -1` : un indice negatif
+   ne passe derriere le fond de son parent que si celui-ci ne cree pas de
+   contexte d'empilement, ce qui est trop fragile pour le socle visuel de la
+   page. Ici l'aurora est peinte au-dessus du fond du body (indice 0) et le
+   contenu passe au-dessus d'elle (`main` est en `relative z-10`).
+
+   En `fixed` : elle ne defile pas, donc le verre change de teinte au fil du
+   scroll au lieu d'emporter son decor avec lui. */
+.aurora {
+  position: fixed;
+  inset: -10%;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(42rem 32rem at 14% -6%, var(--aurora-violet), transparent 62%),
+    radial-gradient(38rem 30rem at 86% 4%, var(--aurora-magenta), transparent 64%),
+    radial-gradient(44rem 34rem at 76% 78%, var(--aurora-cyan), transparent 62%),
+    radial-gradient(34rem 26rem at 16% 94%, var(--aurora-gold), transparent 64%);
+  animation: aurora-drift 52s ease-in-out infinite;
+}
+
+@keyframes aurora-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-2.5%, 2%, 0) scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aurora {
+    animation: none;
+  }
+}
+
+/* Chiffres alignes en colonne : indispensable des qu'on empile des compteurs
+   de trophees les uns sous les autres. */
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------------------------------------------------------------------
+   Utilitaires verre
+
+   Trois niveaux, et c'est volontaire : `backdrop-filter` coute cher et
+   s'empile mal. Seuls les panneaux de premier niveau floutent reellement ;
+   les blocs imbriques se contentent d'un voile translucide.
+--------------------------------------------------------------------------- */
+
+/* Panneau de premier niveau : les grandes sections de la page. */
+@utility glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(160%);
+  box-shadow: var(--glass-shadow), inset 0 1px 0 0 var(--glass-highlight);
+}
+
+/* Bloc imbrique dans un panneau : pas de flou, juste un voile. */
+@utility glass-inset {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight);
+}
+
+/* Barre translucide fixee en haut de page. Plus floutee que les panneaux :
+   le contenu defile dessous et doit rester illisible. */
+@utility glass-bar {
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--glass-border);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+}
+
+/* Boite de dialogue. Nettement plus opaque que les panneaux : elle se
+   superpose au contenu de la page, la lisibilite prime sur la transparence. */
+@utility glass-modal {
+  background: var(--popover);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-2xl);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  box-shadow: 0 28px 70px -20px oklch(0 0 0 / 0.55),
+    inset 0 1px 0 0 var(--glass-highlight);
+}
+
+/* Ligne de combat teintee par son resultat.
+
+   C'est la signature de la page : la couleur ne vient pas d'une bordure
+   posee par-dessus, mais d'une lueur placee DERRIERE le verre, qui le
+   traverse depuis le bord gauche. Le composant fournit la teinte via --tint,
+   ce qui garde une seule regle CSS pour victoire, defaite et match nul. */
+@utility glass-row {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(14px) saturate(150%);
+  -webkit-backdrop-filter: blur(14px) saturate(150%);
+  box-shadow: inset 0 1px 0 0 var(--glass-highlight);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(
+      22rem 8rem at 0% 50%,
+      var(--tint, transparent),
+      transparent 72%
+    );
+  }
+
+  /* Le lisere vertical gauche : le seul endroit ou la couleur du resultat
+     est franche plutot que diffuse. */
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 3px;
+    border-radius: 999px;
+    background: var(--tint-solid, transparent);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: inset 0 1px 0 0 var(--glass-highlight), var(--glass-shadow);
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glass-row {
+    transition: none;
+  }
+  .glass-row:hover {
+    transform: none;
   }
 }

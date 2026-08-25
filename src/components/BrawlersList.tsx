@@ -72,10 +72,10 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
         onClose={() => setSelected(null)}
       />
     )}
-    <section className="rounded-xl border border-border bg-card p-6">
+    <section className="glass p-6">
       <div className="mb-4 space-y-3">
-        <h2 className="text-xs font-bold tracking-widest text-muted-foreground uppercase flex items-center gap-2">
-          🎮 Les bagarreurs{" "}
+        <h2 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase flex items-center gap-2">
+          Brawlers{" "}
           <span className="text-foreground">{brawlers.length}</span>
         </h2>
 
@@ -138,7 +138,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
           return (
             <div
               key={b.id}
-              className="rounded-lg border border-border bg-muted/60 p-3 flex flex-col items-center gap-2 hover:bg-muted/80 transition-colors cursor-pointer"
+              className="glass-inset p-3 flex flex-col items-center gap-2 transition-transform hover:-translate-y-0.5 cursor-pointer"
               onClick={() => setSelected(b)}
             >
               {/* Image + hypercharge badge */}
@@ -178,7 +178,7 @@ export default function BrawlersList({ brawlers, brawlifyData }: Props) {
 
               {/* Trophies + rank */}
               <div className="w-full flex justify-between items-center text-xs">
-                <span className="font-bold text-yellow-400">
+                <span className="font-display tabular font-extrabold text-amber-600 dark:text-amber-300">
                   🏆 {b.trophies.toLocaleString()}
                 </span>
                 <span

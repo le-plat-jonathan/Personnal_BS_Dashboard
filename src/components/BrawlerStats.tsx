@@ -8,10 +8,10 @@ interface Props {
 }
 
 const MILESTONES = [
-  { min: 1000, label: "1000+", color: "text-blue-400", bar: "bg-blue-400" },
-  { min: 750, label: "750+", color: "text-yellow-400", bar: "bg-yellow-400" },
-  { min: 500, label: "500+", color: "text-green-400", bar: "bg-green-400" },
-  { min: 300, label: "300+", color: "text-zinc-300", bar: "bg-zinc-400" },
+  { min: 1000, label: "1000+", color: "text-sky-600 dark:text-sky-300", bar: "bg-sky-500" },
+  { min: 750, label: "750+", color: "text-amber-600 dark:text-amber-300", bar: "bg-amber-500" },
+  { min: 500, label: "500+", color: "text-emerald-600 dark:text-emerald-300", bar: "bg-emerald-500" },
+  { min: 300, label: "300+", color: "text-foreground/70", bar: "bg-foreground/40" },
 ];
 
 export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
@@ -48,8 +48,8 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Trophy milestones */}
-      <section className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-xs font-bold tracking-widest text-muted-foreground uppercase mb-4 flex items-center gap-2">
+      <section className="glass p-5">
+        <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
           🏆 Trophées brawler
         </h3>
         <div className="space-y-3">
@@ -59,7 +59,7 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
                 <span className={`text-sm font-semibold ${color}`}>{label}</span>
                 <span className={`text-sm font-bold ${color}`}>{count}</span>
               </div>
-              <div className="h-1.5 rounded-full bg-muted">
+              <div className="h-1.5 rounded-full bg-foreground/10">
                 <div
                   className={`h-1.5 rounded-full ${bar}`}
                   style={{ width: `${(count / total) * 100}%` }}
@@ -71,9 +71,9 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
       </section>
 
       {/* By rarity */}
-      <section className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-xs font-bold tracking-widest text-muted-foreground uppercase mb-4 flex items-center gap-2">
-          💎 Par rareté
+      <section className="glass p-5">
+        <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
+          Par rareté
         </h3>
         <div className="space-y-2">
           {rarities.map(([rarity, { color, count }]) => (
@@ -83,7 +83,7 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
                 <span className="text-sm text-muted-foreground truncate">{rarity}</span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-16 h-1.5 rounded-full bg-muted">
+                <div className="w-16 h-1.5 rounded-full bg-foreground/10">
                   <div
                     className="h-1.5 rounded-full"
                     style={{ backgroundColor: color, width: `${(count / total) * 100}%` }}
@@ -97,15 +97,15 @@ export default function BrawlerStats({ brawlers, brawlifyMap }: Props) {
       </section>
 
       {/* By power level */}
-      <section className="rounded-xl border border-border bg-card p-5">
-        <h3 className="text-xs font-bold tracking-widest text-muted-foreground uppercase mb-4 flex items-center gap-2">
-          ⚡ Par niveau de puissance
+      <section className="glass p-5">
+        <h3 className="font-display text-xs font-extrabold tracking-[0.18em] text-muted-foreground uppercase mb-4 flex items-center gap-2">
+          Par niveau de puissance
         </h3>
         <div className="space-y-1.5">
           {powers.map(([power, count]) => (
             <div key={power} className="flex items-center gap-2">
               <span className="text-xs text-muted-foreground w-4 text-right">P{power}</span>
-              <div className="flex-1 h-4 rounded bg-muted overflow-hidden">
+              <div className="flex-1 h-4 rounded bg-foreground/10 overflow-hidden">
                 <div
                   className="h-4 rounded bg-violet-500/80 flex items-center justify-end pr-1"
                   style={{ width: `${(count / maxPowerCount) * 100}%` }}
