@@ -12,6 +12,7 @@ export const PLAYERS: PlayerConfig[] = [
   { id: "anakyn380", name: "Anakyn380", tag: "#QPLY2VCQO" },
   { id: "natnat", name: "Natnat", tag: "#2UYOO2RY9R" },
   { id: "*???*", name: "*???*", tag: "#2CYP90VGGP" },
+  { id: "**Math**", name: "**Math**", tag: "#2CYRVY9980" },
 ];
 
 export const DEFAULT_PLAYER = PLAYERS[0];
