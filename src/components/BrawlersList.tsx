@@ -29,14 +29,6 @@ export default function BrawlersList({ brawlers, brawlifyData, catalogue }: Prop
   const [search, setSearch] = useState("");
   const [selected, setSelected] = useState<Brawler | null>(null);
 
-  const classes = Array.from(
-    new Set(
-      brawlers
-        .map((b) => brawlifyData[b.id]?.class.name)
-        .filter((c): c is string => Boolean(c) && c !== "Unknown")
-    )
-  ).sort();
-
   const hyperchargeCount = brawlers.filter((b) => b.hyperCharges && b.hyperCharges.length > 0).length;
 
   const sorted = [...brawlers].sort((a, b) => {
@@ -55,7 +47,6 @@ export default function BrawlersList({ brawlers, brawlifyData, catalogue }: Prop
   const filtered = sorted.filter((b) => {
     if (search && !b.name.toLowerCase().includes(search.toLowerCase())) return false;
     if (filter === "hypercharge") return b.hyperCharges != null && b.hyperCharges.length > 0;
-    if (filter !== "all") return brawlifyData[b.id]?.class.name === filter;
     return true;
   });
 
@@ -90,15 +81,6 @@ export default function BrawlersList({ brawlers, brawlifyData, catalogue }: Prop
               Hypercharge ({hyperchargeCount})
             </FilterBtn>
           )}
-          {classes.map((cls) => (
-            <FilterBtn
-              key={cls}
-              active={filter === cls}
-              onClick={() => setFilter(cls)}
-            >
-              {cls}
-            </FilterBtn>
-          ))}
         </div>
 
         {/* Search */}
